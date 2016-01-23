@@ -315,16 +315,17 @@ TextCell.prototype.minWidth = function(){
     }, 0)
 }
 
-TextCell.prototype.draw = function(width, height){
-    var result = [];
-    
-    function repeat(string, times){
-	var result = "";
+function repeat(string, times){
+    var result = "";
 	for(var i = 0; i < times; i++){
 	    result += string;
 	}
-	return result;
-    }
+    return result;
+}
+
+
+TextCell.prototype.draw = function(width, height){
+    var result = [];
     
     for(var i = 0; i < height; i++){
 	var line = this.text[i] || "" ;
@@ -332,6 +333,41 @@ TextCell.prototype.draw = function(width, height){
     }
     return result;
 }
+
+
+function UnderlinedCell(inner){
+    this.inner = inner;
+}
+
+UnderlinedCell.prototype.minHeight = function(){
+    return this.inner.minHeight() + 1;
+}
+
+UnderlinedCell.prototype.minWidth = function(){
+    return this.inner.minWidth();
+}
+
+UnderlinedCell.prototype.draw = function(width, height){
+    return this.inner.draw(width, height - 1)
+	.concat([repeat("-", width)])
+}
+
+function RTextCell(text){
+    TextCell.call(this, text);
+}
+
+RTextCell.prototype = Object.create(TextCell.prototype);
+
+RTextCell.prototype.draw = function(width, height){
+    var result = [];
+    
+    for(var i = 0; i < height; i++){
+	var line = this.text[i] || "" ;
+	result.push(repeat(" ", width - line.length) + line);
+    }
+    return result;
+}
+
 
 // Methods for calculating the minimum heights and widths for the
 // rows and columns of table to be drawn out of above table cells
@@ -361,7 +397,7 @@ function drawTable(rows){
     function drawLine(blocks, lineNo){
 	return blocks.map(function(block){
 	    return block[lineNo];
-	}).join(" ");
+	}).join("\t");
     }
 
     function drawRow(row, rowNum){
@@ -376,6 +412,27 @@ function drawTable(rows){
 
     return rows.map(drawRow).join("\n");
     
+}
+
+function dataConvert(data){
+    var keys = Object.keys(data[0]);
+    var keysTable = keys.map(function(key){
+	return new UnderlinedCell(new TextCell(key.toString()));	
+    });
+    var dataTable =  data.map(function(entry){
+	var row = [];
+	keys.forEach(function(key){
+	    var el = entry[key];
+	    if (typeof el == "number"){
+		row.push(new RTextCell(el.toString()));
+	    }else{
+		row.push(new TextCell(el.toString()));
+	    }
+	});
+	return row;
+    });
+    dataTable.unshift(keysTable);
+    return dataTable;
 }
 
 // Vector Representation
@@ -398,3 +455,24 @@ Object.defineProperty(Vector.prototype, "length", {
 	return Math.sqrt(Math.pow(this.x, 2) + Math.pow(this.y, 2));
     }
 });
+
+// Stretched Cell Representation
+
+function StretchCell(inner, width, height){
+    this.inner = inner;
+    this.width = width;
+    this.height = height;
+}
+
+StretchCell.prototype.minHeight = function(){
+    return Math.max(this.height, this.inner.minHeight());
+}
+
+StretchCell.prototype.minWidth = function(){
+    return Math.max(this.width, this.inner.minWidth());
+}
+
+StretchCell.prototype.draw = function(width, height){
+    return this.inner.draw(Math.max(this.minWidth(), width),
+			   Math.max(this.minHeight(), height));
+}
