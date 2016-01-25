@@ -476,3 +476,39 @@ StretchCell.prototype.draw = function(width, height){
     return this.inner.draw(Math.max(this.minWidth(), width),
 			   Math.max(this.minHeight(), height));
 }
+
+
+// Bugs & Error Handling
+
+function loop(a, b){
+    if(!isNaN(a) && !isNaN(b) && a < b) return range(a, b);
+    throw new Error("Not a valid pair of input!");
+}
+
+// Regular Expressions
+
+function findDate(s){
+    var dateTime = /(\d{1,2})-(\d{1,2})-(\d{1,4})/ ;
+    var match = dateTime.exec(s);
+    return new Date(Number(match[3]),
+		    Number(match[2])-1,
+		    Number(match[1]));
+}
+
+var stock = "1 lemon , 2 cabbages , and 101 eggs ";
+function minusOne ( match , amount , unit ) {
+    amount = Number ( amount ) - 1;
+    if ( amount == 1)
+	unit = unit . slice (0 , unit . length - 1) ;
+    else if ( amount == 0){
+	amount = " no ";
+	unit = unit + "s";
+    }
+    return amount + " " + unit ;
+}
+
+function stripComments(code){
+    return code.replace(/\/\/.*|\/\*[^]*?\*\//g, "")
+}
+
+
