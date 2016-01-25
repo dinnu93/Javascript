@@ -512,3 +512,18 @@ function stripComments(code){
 }
 
 
+// RegExp Exercises
+
+/* First Question Answers
+
+/ca(r|t)/ , /pr?op/ , /ferr(et|y|ari)/ , /.ious/ , /\s(\.|\,|\;|\:)/ ,
+
+/\w{7,}/ , /[^e]/  
+
+*/
+
+function removeSingleQuotes(s){
+    var regExp = /(\'\s|\s\')/g ;
+    return s.replace(regExp, '"');
+}
+
