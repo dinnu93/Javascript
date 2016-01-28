@@ -527,7 +527,6 @@ function removeSingleQuotes(s){
     return s.replace(regExp, '"');
 }
 
-// Programming Language : Egg
 
 function parseINI(s){
     var currentSection = {name: null, fields: []};
@@ -551,3 +550,40 @@ function parseINI(s){
     return categories;
 }
 
+// Javascript in Browser
+
+function boom(){
+    alert("Bwahahahahaaaaaaa!");
+}
+
+function replaceText(node, string){
+    if(node.nodeType == document.ELEMENT_NODE){
+	for (var i = 0; i < node.childNodes.length; i++){
+	    replaceText(node.childNodes[i], string);
+	}
+    }else if(node.nodeType == document.TEXT_NODE){
+	node.nodeValue = string;
+    }
+}
+
+// Tables
+
+function convertTable(data){
+    var keys = Object.keys(data[0]);
+    var tableHead = "<tr>" + keys.map(function(key){
+	return "<th>" + key  + "</th>";
+    }).reduce(function(cur, keyStr){
+	return cur.concat(keyStr);
+    }, "") + "</tr>";
+    
+    var tableBody = data.map(function(el){
+	return "<tr>" + keys.map(function(key){
+	    return "<td>" + el[key]  + "</td>";
+	}).reduce(function(curr, elStr){
+	    return curr.concat(elStr);
+	}, "") + "</tr>";
+    }).reduce(function(cur,rowStr){
+	return cur.concat(rowStr);
+    }, "");
+    return "<table>" + tableHead + tableBody + "</table>";
+} 
