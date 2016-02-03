@@ -557,12 +557,16 @@ function boom(){
 }
 
 function replaceText(node, string){
+    var regexp = new RegExp(string, "gi");
     if(node.nodeType == document.ELEMENT_NODE){
 	for (var i = 0; i < node.childNodes.length; i++){
 	    replaceText(node.childNodes[i], string);
 	}
     }else if(node.nodeType == document.TEXT_NODE){
-	node.nodeValue = string;
+	var index = node.nodeValue.indexOf(string);
+	if(index > -1){
+	    node.parentNode.style.border = "solid 1px red";
+	}	
     }
 }
 
