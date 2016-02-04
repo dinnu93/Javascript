@@ -1,2 +1,2 @@
 # Javascript
-Plying with javascript
+Playing with javascript
